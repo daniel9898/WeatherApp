@@ -8,10 +8,7 @@ import {
 const get = () => {
   return new Promise((resolve, reject) => {
     Geolocation.getCurrentPosition(
-      (position) => {
-        const { coords } = position;
-        resolve(coords);
-      },
+      ({ coords }) => resolve(coords),
       (error) => reject(error),
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
     );

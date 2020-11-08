@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Home from 'Screens/Home';
+import Home from 'screens/Home';
 
 const App = () => <Home />;
 

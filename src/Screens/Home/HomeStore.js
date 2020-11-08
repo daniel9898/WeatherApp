@@ -1,13 +1,31 @@
-import { observable, action, computed, runInAction } from 'mobx';
+import { observable, action, runInAction, computed } from 'mobx';
 
-import WeatherService from 'Services/WeatherService';
-import Geolocation from 'Helpers/Geolocation';
+import WeatherService from 'services/weatherService';
+import Geolocation from 'helpers/geolocation';
 
 class HomeStore {
   @observable showSpinner = false;
 
-  constructor() {
-    this.getWeatherForTheCurrentPosition();
+  @observable cityName = null;
+
+  @observable dayList = [];
+
+  @observable description = null;
+
+  @observable temperature = null;
+
+  @observable sensation = null;
+
+  @observable icon = null;
+
+  today = new Date().toDateString();
+
+  @computed get todayDescription() {
+    if (this.dayList.length > 0) {
+      return `${this.today} ${this.dayList[0].description}`;
+    }
+
+    return null;
   }
 
   @action async getWeatherForTheCurrentPosition() {
@@ -18,12 +36,17 @@ class HomeStore {
 
       const location = await Geolocation.get();
 
-      console.log('location ', location);
+      const currentCity = await WeatherService.get(location);
 
-      const response = await WeatherService.get(location);
-      console.log('CIUDAD ----------- ', response.country);
+      runInAction(() => {
+        this.cityName = currentCity.name;
+        this.dayList = currentCity.list;
+        this.temperature = `${currentCity.list[0].temp} °`;
+        this.sensation = `Sensación ${currentCity.list[0].feelsLike} °`;
+        this.icon = currentCity.list[0].icon;
+      });
     } catch (error) {
-      console.log('error', error);
+      console.log(' error', error);
     }
 
     this.showSpinner = false;
