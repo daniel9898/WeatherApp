@@ -1,25 +1,41 @@
 /* eslint-disable camelcase */
 import StringHelper from 'helpers/string';
-import weatherIcon from 'helpers/icons';
 
 class WeatherModel {
-  constructor({ dt_txt, main, weather }) {
-    this.date = dt_txt;
-    this.temp = parseInt(main.temp, 10);
-    this.tempMax = parseInt(main.temp_max, 10);
-    this.tempMin = parseInt(main.temp_min, 10);
-    this.feelsLike = parseInt(main.feels_like, 10);
-    this.humidity = main.humidity;
-    this.description = StringHelper.capitalize(weather[0].description);
-    this.icon = weatherIcon(weather[0].icon);
+  constructor(date, { temp_max, temp_min }, temp, feels_like, weather) {
+    this.date = date;
+    this.temp = parseInt(temp, 10);
+    this.tempMax = parseInt(temp_max, 10);
+    this.tempMin = parseInt(temp_min, 10);
+    this.feelsLike = parseInt(feels_like, 10);
+    // this.description = StringHelper.capitalize(description);
   }
 
   static fromJson(dayList) {
-    dayList.map((day) => {
-      console.log('------------------------');
+    const newArray = WeatherModel.getMinMaxTempByDay(dayList);
+    console.log('Min Max array ', newArray);
+    return newArray;
+  }
+
+  static getMinMaxTempByDay(dayList) {
+    return dayList.reduce((acc, day) => {
+      console.log(' DIA ------------------------');
       console.log(day);
-    });
-    return dayList.map((day) => new WeatherModel(day));
+
+      const { dt_txt, temp, feels_like } = day;
+      const date = dt_txt.split(' ')[0];
+
+      if (acc[date]) {
+        acc[date].temp_max = Math.max(acc[date].temp_max, day.main.temp_max);
+        acc[date].temp_min = Math.min(acc[date].temp_min, day.main.temp_min);
+      } else {
+        acc[date] = {
+          temp_max: day.main.temp_max,
+          temp_min: day.main.temp_min,
+        };
+      }
+      return new WeatherModel(date, acc[date], temp, feels_like);
+    }, []);
   }
 }
 

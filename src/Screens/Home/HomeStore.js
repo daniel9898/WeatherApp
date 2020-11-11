@@ -40,10 +40,9 @@ class HomeStore {
 
       runInAction(() => {
         this.cityName = currentCity.name;
-        this.dayList = currentCity.list;
-        this.temperature = `${currentCity.list[0].temp} °`;
-        this.sensation = `Sensación ${currentCity.list[0].feelsLike} °`;
-        this.icon = currentCity.list[0].icon;
+        this.dayList = currentCity.dayList;
+        this.temperature = `${this.dayList[0].temp} °`;
+        this.sensation = `Sensación ${this.dayList[0].feelsLike} °`;
       });
     } catch (error) {
       console.log(' error', error);

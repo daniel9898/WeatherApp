@@ -27,7 +27,6 @@ const Home = () => {
         headerSubTitle={homeStore.todayDescription}
         contentTitle={homeStore.temperature}
         contentSubtitle={homeStore.sensation}
-        icon={homeStore.icon}
       />
       <MainCard
         headerTitle="Pronóstico diario"
